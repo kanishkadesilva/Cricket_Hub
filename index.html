@@ -161,6 +161,22 @@ body.light .search,body.light .apiInput{background:#fff;color:#102033}body.light
 .rankNote{margin-top:14px}
 @media(max-width:780px){.rankShell{grid-template-columns:1fr}.rankNav{display:flex;overflow:auto}.rankNav button{white-space:nowrap}.rankTable{min-width:560px}.rankContent{overflow:auto}.matchMainTab{padding:12px 18px}}
 
+
+/* ===== ADAPTIVE SCORE POLLING ===== */
+.pollingInfo{
+  margin-top:10px;padding:10px 12px;border:1px solid var(--line);
+  border-radius:11px;background:rgba(255,255,255,.035);
+  font-size:12px;line-height:1.55;color:var(--muted)
+}
+.pollingInfo strong{color:var(--text)}
+.errorDetails{
+  margin-top:10px;padding:11px 12px;border:1px solid rgba(255,91,115,.45);
+  border-radius:11px;background:rgba(255,91,115,.08);
+  color:#ffc2cb;font-size:12px;line-height:1.55;white-space:pre-wrap;
+  overflow-wrap:anywhere
+}
+body.light .errorDetails{color:#9b263c;background:#fff1f3}
+
 </style>
 </head>
 <body>
@@ -194,6 +210,8 @@ body.light .search,body.light .apiInput{background:#fff;color:#102033}body.light
     <div class="muted" id="heroUpdated">Checking the cricket feed</div>
     <div class="notice">🔄 Scores refresh automatically. Completed matches stay visible so the final score/status can update after the match ends.</div>
     <div class="health"><span id="healthDot" class="healthDot"></span><span id="healthText">Connecting to score service…</span></div>
+    <div id="pollingInfo" class="pollingInfo">Polling mode: <strong>Connecting…</strong></div>
+    <div id="errorDetails" class="errorDetails" style="display:none"></div>
   </div>
 </section>
 
@@ -238,6 +256,14 @@ body.light .search,body.light .apiInput{background:#fff;color:#102033}body.light
     <div id="matchExplorerBody"></div>
   </div>
 </section>
+
+<section class="section wrap" id="matches">
+  <div class="head"><div><h2>🏏 Upcoming & Completed</h2><p>Full status overview from the connected cricket feed</p></div></div>
+  <div id="upcomingGrid" class="grid"></div>
+  <div style="height:18px"></div>
+  <div id="completedGrid" class="grid"></div>
+</section>
+
 
 <section class="section wrap" id="rankings">
   <div class="head">
@@ -319,6 +345,18 @@ let API_KEY=localStorage.getItem("cricket_api_key")||DEFAULT_API_KEY;
 let allMatches=[];
 let todayFilter="all";
 let lastSuccessfulUpdate=null;
+
+/* ===== ADAPTIVE POLLING STATE ===== */
+const POLL_INTERVALS = {
+  noLive: 5 * 60 * 1000,       // 5 minutes when no live match exists
+  live: 60 * 1000,             // 60 seconds when a match is live
+  completed: 5 * 60 * 1000,    // 5 minutes after matches finish
+  error: 60 * 1000              // retry after 60 seconds on API error
+};
+let scorePollTimer=null;
+let currentPollMode="connecting";
+let currentPollDelay=POLL_INTERVALS.noLive;
+let isScoreRequestRunning=false;
 
 const players=[
  ["Sachin Tendulkar","India • Batter","ST","100 international centuries","15,921 Test runs"],
@@ -417,20 +455,50 @@ function setHealth(ok,text){
 }
 
 async function loadScores(manual=false){
- try{
-   const j=await apiFetch("/currentMatches?offset=0");
-   const data=j.data||[];
-   lastSuccessfulUpdate=new Date();
-   renderMatches(data);
-   setHealth(true,"Score feed connected • auto-refresh active");
-   if(manual) toast("Live scores updated.");
- }catch(e){
-   setHealth(false,"Score feed unavailable • retrying automatically");
-   document.getElementById("heroCount").textContent="SCORE FEED OFFLINE";
-   document.getElementById("heroUpdated").textContent="Last successful update: "+(lastSuccessfulUpdate?lastSuccessfulUpdate.toLocaleTimeString():"none");
-   if(!allMatches.length) document.getElementById("liveGrid").innerHTML=empty("Unable to load live scores.","Check your API key or connection, then press Refresh.");
-   if(manual) toast("Could not update scores. Check the API key/connection.");
- }
+  if(isScoreRequestRunning) return;
+  isScoreRequestRunning=true;
+  if(scorePollTimer){clearTimeout(scorePollTimer);scorePollTimer=null;}
+  if(manual) setPollingInfo("connecting",0);
+
+  try{
+    const j=await apiFetch("/currentMatches?offset=0");
+    const data=Array.isArray(j.data)?j.data:[];
+    lastSuccessfulUpdate=new Date();
+    clearApiError();
+    renderMatches(data);
+
+    const liveCount=data.filter(m=>matchStatus(m)==="live").length;
+    const completedCount=data.filter(m=>matchStatus(m)==="completed").length;
+
+    if(liveCount>0){
+      currentPollMode="live";
+      setHealth(true,"Score feed connected • live monitoring active");
+      scheduleScorePoll(POLL_INTERVALS.live);
+    }else if(completedCount>0){
+      currentPollMode="completed";
+      setHealth(true,"Score feed connected • no live matches");
+      scheduleScorePoll(POLL_INTERVALS.completed);
+    }else{
+      currentPollMode="noLive";
+      setHealth(true,"Score feed connected • waiting for live matches");
+      scheduleScorePoll(POLL_INTERVALS.noLive);
+    }
+
+    if(manual) toast("Cricket scores updated.");
+  }catch(e){
+    currentPollMode="error";
+    setHealth(false,"Score feed error • retry scheduled");
+    document.getElementById("heroCount").textContent="SCORE FEED ERROR";
+    document.getElementById("heroUpdated").textContent="Last successful update: "+(lastSuccessfulUpdate?lastSuccessfulUpdate.toLocaleTimeString():"none");
+    showApiError(e);
+    if(!allMatches.length){
+      document.getElementById("liveGrid").innerHTML=empty("Unable to load live scores.","Check your API key or connection, then press Refresh.");
+    }
+    scheduleScorePoll(POLL_INTERVALS.error);
+    if(manual) toast("Score update failed. See the error details.");
+  }finally{
+    isScoreRequestRunning=false;
+  }
 }
 
 const FALLBACK_NEWS=[
@@ -515,7 +583,7 @@ async function loadAll(manual=false){
 renderPlayers();
 renderNews(FALLBACK_NEWS);
 loadAll();
-setInterval(()=>loadScores(false),30000);
+// Score polling is adaptive; loadScores() schedules the next check based on match status.
 setInterval(()=>loadNews(false),300000);
 
 /* ===== CARD STAGGER ANIMATION ===== */

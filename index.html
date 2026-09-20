@@ -126,6 +126,41 @@ body.light .search,body.light .apiInput{background:#fff;color:#102033}body.light
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
 
+
+/* ===== MATCHES EXPLORER + ICC RANKINGS ===== */
+.matchesApp{background:linear-gradient(180deg,rgba(7,18,31,.35),rgba(7,18,31,.08));border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.matchMainTabs,.matchCats{display:flex;gap:8px;overflow:auto;padding:12px 14px}
+.matchMainTabs{background:#07121f;border-bottom:1px solid var(--line);justify-content:flex-start}
+.matchMainTab{border:0;background:transparent;color:var(--muted);padding:12px 24px;font-weight:900;white-space:nowrap;position:relative}
+.matchMainTab.active{color:#fff}.matchMainTab.active:after{content:"";position:absolute;left:12px;right:12px;bottom:-13px;height:3px;background:var(--green);border-radius:5px}
+.matchCats{background:#0b1826;border-bottom:1px solid var(--line)}
+.matchCat{border:1px solid #657381;background:transparent;color:#d8e0e8;border-radius:999px;padding:9px 18px;font-weight:800;white-space:nowrap}
+.matchCat.active{border-color:var(--green);color:var(--green);background:rgba(37,211,102,.06)}
+.matchGroup{border-bottom:1px solid var(--line)}
+.matchGroupTitle{padding:18px 20px 10px;font-size:13px;font-weight:950;letter-spacing:.7px;color:#e9f2f8;text-transform:uppercase}
+.seriesTitle{padding:12px 20px;background:rgba(255,255,255,.025);display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;color:var(--muted);font-weight:800}
+.seriesTitle span:last-child{font-size:22px;color:#e7eef4}
+.matchesApp .score{border:0;border-radius:0;background:rgba(255,255,255,.035);box-shadow:none;border-top:1px solid rgba(255,255,255,.035)}
+.matchesApp .score:hover{transform:none;background:rgba(255,255,255,.065);border-color:transparent}
+.matchesApp .empty{margin:14px;border:1px solid var(--line);border-radius:15px}
+.rankShell{display:grid;grid-template-columns:260px 1fr;gap:15px}
+.rankNav{padding:14px;display:grid;gap:8px;align-content:start}
+.rankNav button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:12px;padding:12px;text-align:left;font-weight:850}
+.rankNav button.active{background:var(--green);border-color:var(--green);color:#06110a}
+.rankContent{padding:20px}
+.rankTop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.rankTitle{font-size:25px;font-weight:950;margin:0}
+.rankSub{font-size:12px;color:var(--muted);margin-top:4px}
+.rankTable{width:100%;border-collapse:collapse;margin-top:15px}
+.rankTable th,.rankTable td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}
+.rankTable th{font-size:10px;color:var(--muted);text-transform:uppercase}
+.rankTable td{font-weight:800}
+.rankPos{width:45px;color:var(--muted)}
+.rankTeam{display:flex;align-items:center;gap:10px}.rankFlag{width:32px;height:23px;border-radius:5px;display:grid;place-items:center;background:#1d3448;font-size:15px}
+.rankPoints{color:var(--cyan)}
+.rankNote{margin-top:14px}
+@media(max-width:780px){.rankShell{grid-template-columns:1fr}.rankNav{display:flex;overflow:auto}.rankNav button{white-space:nowrap}.rankTable{min-width:560px}.rankContent{overflow:auto}.matchMainTab{padding:12px 18px}}
+
 </style>
 </head>
 <body>
@@ -133,7 +168,7 @@ body.light .search,body.light .apiInput{background:#fff;color:#102033}body.light
   <div class="wrap nav">
     <a class="brand" href="#home">CRICKET<span>HUB</span> PRO 🏏</a>
     <nav>
-      <a href="#live">Live</a><a href="#today">Today</a><a href="#matches">Matches</a><a href="#news">News</a><a href="#players">Players</a><a href="#contact">Contact</a>
+      <a href="#live">Live</a><a href="#today">Today</a><a href="#matchesExplorer">Matches</a><a href="#rankings">Rankings</a><a href="#news">News</a><a href="#players">Players</a><a href="#contact">Contact</a>
     </nav>
     <div class="navActions">
       <button class="iconBtn" id="mode" onclick="toggleMode()" title="Theme">☀️</button>
@@ -181,11 +216,52 @@ body.light .search,body.light .apiInput{background:#fff;color:#102033}body.light
   <div id="todayGrid" class="grid"></div>
 </section>
 
+
+<section class="section wrap" id="matchesExplorer">
+  <div class="head">
+    <div><h2>🏏 Matches</h2><p>Browse matches by status and competition — International, League, Domestic and Women's cricket.</p></div>
+    <button class="btn" onclick="renderMatchesExplorer()">↻ Refresh view</button>
+  </div>
+  <div class="matchesApp card">
+    <div class="matchMainTabs">
+      <button class="matchMainTab active" data-mstatus="live" onclick="setMatchStatus('live',this)">LIVE</button>
+      <button class="matchMainTab" data-mstatus="upcoming" onclick="setMatchStatus('upcoming',this)">UPCOMING</button>
+      <button class="matchMainTab" data-mstatus="completed" onclick="setMatchStatus('completed',this)">RECENT</button>
+    </div>
+    <div class="matchCats">
+      <button class="matchCat active" onclick="setMatchCategory('all',this)">All</button>
+      <button class="matchCat" onclick="setMatchCategory('international',this)">International</button>
+      <button class="matchCat" onclick="setMatchCategory('league',this)">League</button>
+      <button class="matchCat" onclick="setMatchCategory('domestic',this)">Domestic</button>
+      <button class="matchCat" onclick="setMatchCategory('women',this)">Women</button>
+    </div>
+    <div id="matchExplorerBody"></div>
+  </div>
+</section>
+
 <section class="section wrap" id="matches">
   <div class="head"><div><h2>🏏 Upcoming & Completed</h2><p>Full status overview from the connected cricket feed</p></div></div>
   <div id="upcomingGrid" class="grid"></div>
   <div style="height:18px"></div>
   <div id="completedGrid" class="grid"></div>
+</section>
+
+
+<section class="section wrap" id="rankings">
+  <div class="head">
+    <div><h2>🌍 ICC Team Rankings</h2><p>Men's and Women's international team rankings, with format filters.</p></div>
+    <a class="btn" href="https://www.icc-cricket.com/rankings" target="_blank" rel="noopener">Open ICC Rankings ↗</a>
+  </div>
+  <div class="card rankShell">
+    <div class="rankNav">
+      <button class="active" onclick="setRanking('men-test',this)">Men • Test</button>
+      <button onclick="setRanking('men-odi',this)">Men • ODI</button>
+      <button onclick="setRanking('men-t20',this)">Men • T20I</button>
+      <button onclick="setRanking('women-odi',this)">Women • ODI</button>
+      <button onclick="setRanking('women-t20',this)">Women • T20I</button>
+    </div>
+    <div class="rankContent" id="rankContent"></div>
+  </div>
 </section>
 
 <section class="section wrap" id="news">
@@ -464,6 +540,115 @@ const _renderNews=renderNews;
 renderNews=function(items){_renderNews(items);refreshCardAnimations();};
 const _renderPlayers=renderPlayers;
 renderPlayers=function(list=players){_renderPlayers(list);refreshCardAnimations();};
+
+
+/* ===== MATCH EXPLORER ===== */
+let explorerStatus="live", explorerCategory="all";
+function explorerCategoryOf(m){
+  const s=((m.matchType||m.type||"")+" "+(m.name||m.title||"")+" "+(m.status||"")).toLowerCase();
+  if(/\bwomen\b|\bwomen's\b|\bwmn\b/.test(s)) return "women";
+  if(/domestic|county|sheffield|ranji|plunket|four-day|provincial|regional|state/.test(s)) return "domestic";
+  if(/league|premier|t20 blast|hundred|bbl|psl|ipl|cpl|bpl|lpl|mlc|sa20|ilt20/.test(s)) return "league";
+  return "international";
+}
+function explorerGroupName(m){
+  const s=(m.name||m.title||"").trim();
+  return s || (m.matchType||m.type||"Cricket Match");
+}
+function renderMatchesExplorer(){
+  const source=allMatches.filter(m=>matchStatus(m)===explorerStatus && (explorerCategory==="all"||explorerCategoryOf(m)===explorerCategory));
+  const body=document.getElementById("matchExplorerBody");
+  if(!source.length){
+    body.innerHTML=empty(explorerStatus==="live"?"No live matches":"No "+(explorerStatus==="upcoming"?"upcoming":"recent")+" matches","Try another competition category or wait for the next score update.");
+    return;
+  }
+  const groups=[];
+  source.forEach(m=>{
+    const key=explorerGroupName(m);
+    let g=groups.find(x=>x.key===key);
+    if(!g){g={key,items:[]};groups.push(g)}
+    g.items.push(m);
+  });
+  body.innerHTML=groups.map(g=>{
+    const cat=(g.items[0]&&explorerCategoryOf(g.items[0]))||"international";
+    const label=cat==="women"?"WOMEN":cat==="league"?"LEAGUE":cat==="domestic"?"DOMESTIC":"INTERNATIONAL";
+    return `<div class="matchGroup"><div class="matchGroupTitle">${label}</div>
+      <div class="seriesTitle"><span>${safe(g.key)}</span><span>›</span></div>
+      ${g.items.map(matchCard).join("")}</div>`;
+  }).join("");
+  refreshCardAnimations();
+}
+function setMatchStatus(s,el){
+  explorerStatus=s;
+  document.querySelectorAll(".matchMainTab").forEach(x=>x.classList.remove("active"));
+  el.classList.add("active");renderMatchesExplorer();
+}
+function setMatchCategory(c,el){
+  explorerCategory=c;
+  document.querySelectorAll(".matchCat").forEach(x=>x.classList.remove("active"));
+  el.classList.add("active");renderMatchesExplorer();
+}
+const _renderMatchesExplorerHook=renderMatches;
+renderMatches=function(ms){
+  _renderMatchesExplorerHook(ms);
+  renderMatchesExplorer();
+};
+
+/* ===== ICC TEAM RANKINGS =====
+   Baseline data below is sourced from ICC's 2026 annual team-ranking updates.
+   The official ICC rankings link is provided above for the latest live table.
+*/
+const rankingData={
+ "men-test":{
+   title:"ICC Men's Test Team Rankings",updated:"1 May 2026",
+   rows:[
+    ["Australia","🇦🇺",1,131],["South Africa","🇿🇦",2,119],["India","🇮🇳",3,104],["England","🏴",4,102],
+    ["New Zealand","🇳🇿",5,101],["Pakistan","🇵🇰",6,89],["Sri Lanka","🇱🇰",7,86],["West Indies","🏝️",8,68],
+    ["Bangladesh","🇧🇩",9,67],["Zimbabwe","🇿🇼",10,10]
+   ]},
+ "men-odi":{
+   title:"ICC Men's ODI Team Rankings",updated:"7 May 2026",
+   rows:[
+    ["India","🇮🇳",1,118],["New Zealand","🇳🇿",2,113],["Australia","🇦🇺",3,109],["South Africa","🇿🇦",4,102],
+    ["Pakistan","🇵🇰",5,98],["Sri Lanka","🇱🇰",6,96],["Afghanistan","🇦🇫",7,93],["England","🏴",8,89],
+    ["Bangladesh","🇧🇩",9,84],["West Indies","🏝️",10,74]
+   ]},
+ "men-t20":{
+   title:"ICC Men's T20I Team Rankings",updated:"11 July 2026 — latest No.1 update verified from ICC",
+   rows:[
+    ["England","🏴",1,"—"],["India","🇮🇳",2,"—"],["Australia","🇦🇺",3,"—"],["New Zealand","🇳🇿",4,"—"],
+    ["South Africa","🇿🇦",5,"—"],["Pakistan","🇵🇰",6,"—"],["West Indies","🏝️",7,"—"],["Bangladesh","🇧🇩",8,"—"],
+    ["Sri Lanka","🇱🇰",9,"—"],["Afghanistan","🇦🇫",10,"—"]
+   ]},
+ "women-odi":{
+   title:"ICC Women's ODI Team Rankings",updated:"1 May 2026",
+   rows:[
+    ["Australia","🇦🇺",1,163],["England","🏴",2,128],["India","🇮🇳",3,124],["South Africa","🇿🇦",4,100],
+    ["New Zealand","🇳🇿",5,93],["Sri Lanka","🇱🇰",6,89],["Bangladesh","🇧🇩",7,73],["Pakistan","🇵🇰",8,72],
+    ["West Indies","🏝️",9,71],["Ireland","🇮🇪",10,50],["Scotland","🏴",11,42],["Zimbabwe","🇿🇼",12,14]
+   ]},
+ "women-t20":{
+   title:"ICC Women's T20I Team Rankings",updated:"6 June 2026 — ICC table",
+   rows:[
+    ["Australia","🇦🇺",1,287],["England","🏴",2,275],["India","🇮🇳",3,264],["New Zealand","🇳🇿",4,254],
+    ["South Africa","🇿🇦",5,243],["Sri Lanka","🇱🇰",6,237],["West Indies","🏝️",7,236],
+    ["Pakistan","🇵🇰",8,214],["Ireland","🇮🇪",9,204],["Bangladesh","🇧🇩",10,194]
+   ]}
+};
+function setRanking(key,el){
+ document.querySelectorAll(".rankNav button").forEach(x=>x.classList.remove("active"));
+ el.classList.add("active");renderRanking(key);
+}
+function renderRanking(key="men-test"){
+ const d=rankingData[key]||rankingData["men-test"];
+ document.getElementById("rankContent").innerHTML=`
+  <div class="rankTop"><div><div class="rankTitle">${d.title}</div><div class="rankSub">Last verified update: ${d.updated}</div></div><span class="tag">ICC TEAMS</span></div>
+  <div class="tableWrap"><table class="rankTable"><thead><tr><th>Pos</th><th>Team</th><th>Rating</th></tr></thead>
+  <tbody>${d.rows.map(r=>`<tr><td class="rankPos">${r[2]}</td><td><div class="rankTeam"><span class="rankFlag">${r[1]}</span>${safe(r[0])}</div></td><td class="rankPoints">${safe(r[3])}</td></tr>`).join("")}</tbody></table></div>
+  <div class="notice rankNote">ℹ️ Rankings are maintained by the ICC. The website links directly to the official ICC rankings page for the newest table; the displayed baseline is dated above.</div>`;
+}
+renderRanking("men-test");
+renderMatchesExplorer();
 
 </script>
 </body>

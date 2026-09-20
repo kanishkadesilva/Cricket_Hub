@@ -178,31 +178,163 @@ body.light .search,body.light .apiInput{background:#fff;color:#102033}body.light
 body.light .errorDetails{color:#9b263c;background:#fff1f3}
 
 
-/* ===== WORLD CUP HUB ===== */
-.worldCupHero{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}
-.wcBanner{padding:24px;background:radial-gradient(circle at 90% 0%,rgba(37,211,102,.18),transparent 45%),linear-gradient(135deg,#102c43,#081522);border:1px solid var(--line);border-radius:20px}
-.wcKicker{font-size:11px;letter-spacing:1.4px;color:var(--cyan);font-weight:950}
-.wcBanner h3{font-size:29px;margin:10px 0 8px}
-.wcBanner p{color:var(--muted);line-height:1.65;font-size:13px}
-.wcMiniGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.wcMini{padding:16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035)}
-.wcMini b{display:block;font-size:25px;color:var(--gold);margin:5px 0}
-.wcMini span{font-size:12px;color:var(--muted)}
-.wcFilter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
-.wcFilter button{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:10px 14px;font-weight:900}
-.wcFilter button.active{background:var(--green);border-color:var(--green);color:#06110a}
-.wcInfoGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}
-.wcInfo{padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
-.wcInfo small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase}
-.wcInfo strong{display:block;margin-top:7px;font-size:15px}
-.wcTable{width:100%;border-collapse:collapse;min-width:600px}
-.wcTable th,.wcTable td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}
-.wcTable th{font-size:10px;color:var(--muted);text-transform:uppercase}
-.wcTable td{font-size:13px;font-weight:800}
-.wcRank{color:var(--gold);font-size:18px}
-.wcCountry{display:flex;gap:9px;align-items:center}
-.wcYears{color:var(--cyan);font-size:12px;line-height:1.6}
-@media(max-width:780px){.worldCupHero{grid-template-columns:1fr}.wcInfoGrid{grid-template-columns:1fr}}
+/* ===== World Cup animated champions enhancement ===== */
+.worldCupFirstChampions{
+  margin-top:22px;
+  padding:22px;
+  border:1px solid rgba(74,164,231,.35);
+  border-radius:26px;
+  background:linear-gradient(135deg,rgba(15,39,61,.98),rgba(7,23,37,.98));
+  overflow:hidden;
+  position:relative;
+}
+.worldCupFirstChampions:before{
+  content:"";
+  position:absolute;
+  width:260px;height:260px;
+  right:-100px;top:-130px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(30,220,113,.20),transparent 68%);
+  animation:wcGlow 5s ease-in-out infinite alternate;
+}
+.wcFirstTitle{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:16px;
+}
+.wcFirstTitle h3{margin:0;font-size:1.25rem;color:#f5f9ff}
+.wcFirstTitle span{font-size:.78rem;color:#8fb0c9;letter-spacing:1px;text-transform:uppercase}
+.wcChampionRail{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
+}
+.wcChampionCard{
+  position:relative;
+  padding:17px 14px;
+  border-radius:20px;
+  border:1px solid rgba(126,190,235,.24);
+  background:linear-gradient(160deg,rgba(26,51,73,.95),rgba(11,29,45,.96));
+  text-align:center;
+  transform:translateY(18px);
+  opacity:0;
+  animation:wcChampionIn .75s cubic-bezier(.2,.8,.2,1) forwards;
+  animation-delay:var(--delay);
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+}
+.wcChampionCard:hover{
+  transform:translateY(-7px) scale(1.02);
+  border-color:#20dc71;
+  box-shadow:0 12px 32px rgba(0,0,0,.28),0 0 25px rgba(32,220,113,.12);
+}
+.wcChampionCard:after{
+  content:"";
+  position:absolute;inset:0;border-radius:20px;
+  background:linear-gradient(120deg,transparent 25%,rgba(255,255,255,.10),transparent 70%);
+  transform:translateX(-130%);
+  animation:wcShine 4.8s ease-in-out infinite;
+  animation-delay:calc(var(--delay) + 1s);
+  pointer-events:none;
+}
+.wcFlag{
+  width:78px;height:52px;object-fit:cover;
+  border-radius:8px;
+  display:block;margin:0 auto 12px;
+  box-shadow:0 5px 15px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.22);
+}
+.wcTrophy{font-size:1.5rem;margin-bottom:5px}
+.wcChampionCard h4{margin:0;color:#fff;font-size:1rem}
+.wcChampionCard p{margin:6px 0 0;color:#9eb8ce;font-size:.8rem}
+.wcChampionCard strong{color:#ffd166}
+.wcFirstNote{
+  margin:15px 0 0;color:#9db7cc;font-size:.84rem;line-height:1.55;
+}
+.wcPulseDot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:#20dc71;box-shadow:0 0 0 0 rgba(32,220,113,.6);
+  animation:wcPulse 1.8s infinite;margin-right:7px;
+}
+@keyframes wcChampionIn{to{opacity:1;transform:translateY(0)}}
+@keyframes wcShine{0%,48%{transform:translateX(-130%)}70%,100%{transform:translateX(130%)}}
+@keyframes wcGlow{from{transform:scale(.9);opacity:.65}to{transform:scale(1.2);opacity:1}}
+@keyframes wcPulse{0%{box-shadow:0 0 0 0 rgba(32,220,113,.6)}70%{box-shadow:0 0 0 10px rgba(32,220,113,0)}100%{box-shadow:0 0 0 0 rgba(32,220,113,0)}}
+@media(max-width:760px){
+  .wcChampionRail{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .worldCupFirstChampions{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .wcChampionCard,.wcChampionCard:after,.worldCupFirstChampions:before,.wcPulseDot{
+    animation:none!important;transform:none!important;opacity:1!important;
+  }
+}
+
+
+/* ===== All-Star Players Explorer ===== */
+.playerTools{padding:18px;margin-bottom:16px}
+.playerToolRow{display:grid;grid-template-columns:minmax(180px,2fr) 1fr 1fr auto;gap:10px;align-items:center}
+.playerToolRow select{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);font:inherit}
+.playerQuickFilters{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.playerChip{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:9px 13px;cursor:pointer;font-weight:700}
+.playerChip.active,.playerChip:hover{border-color:#20dc71;background:rgba(32,220,113,.12);color:var(--text)}
+.playerUniverseGrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.playerAllStarCard{position:relative;overflow:hidden;cursor:pointer;opacity:0;transform:translateY(18px);animation:playerRise .65s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--player-delay);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.playerAllStarCard:hover{transform:translateY(-8px);border-color:#20dc71;box-shadow:0 18px 38px rgba(0,0,0,.28),0 0 26px rgba(32,220,113,.10)}
+.playerAllStarCard:before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,transparent 20%,rgba(255,255,255,.08),transparent 65%);transform:translateX(-130%);animation:playerShine 5s ease-in-out infinite;animation-delay:calc(var(--player-delay) + 1s);pointer-events:none}
+.playerCardTop{display:flex;gap:13px;align-items:center}
+.playerPortrait{width:78px;height:78px;border-radius:20px;object-fit:cover;border:2px solid rgba(32,220,113,.55);background:#102638;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+.playerMeta{min-width:0;flex:1}
+.playerMeta h3{margin:0 0 5px;font-size:1.08rem}
+.playerMeta p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.45}
+.playerBadge{display:inline-block;margin-top:7px;font-size:.68rem;letter-spacing:.5px;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:rgba(32,220,113,.13);color:#20dc71;border:1px solid rgba(32,220,113,.3)}
+.playerStatsMini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}
+.playerMiniStat{padding:10px;border-radius:13px;background:rgba(127,160,190,.08);border:1px solid rgba(127,160,190,.12)}
+.playerMiniStat span{display:block;color:var(--muted);font-size:.72rem}
+.playerMiniStat b{display:block;margin-top:3px;font-size:.92rem;color:var(--text)}
+.playerAchievement{margin-top:12px;color:var(--muted);font-size:.8rem;line-height:1.5}
+.playerAchievement strong{color:var(--text)}
+.playerCardFooter{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:.78rem}
+.playerCardFooter span{color:var(--muted)}
+.playerCardFooter b{color:#20dc71}
+.playerProfileHero{display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center;margin-bottom:16px}
+.playerProfilePhoto{width:96px;height:96px;object-fit:cover;border-radius:24px;border:2px solid #20dc71}
+.playerProfileHero h3{margin:0 0 5px}
+.playerProfileHero p{margin:0;color:var(--muted)}
+.playerProfileGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.playerProfileItem{padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(127,160,190,.07)}
+.playerProfileItem span{display:block;color:var(--muted);font-size:.75rem}
+.playerProfileItem b{display:block;margin-top:4px}
+@keyframes playerRise{to{opacity:1;transform:translateY(0)}}
+@keyframes playerShine{0%,45%{transform:translateX(-130%)}70%,100%{transform:translateX(130%)}}
+@media(max-width:760px){
+  .playerToolRow{grid-template-columns:1fr 1fr}
+  .playerToolRow .search{grid-column:1/-1}
+  .playerToolRow .btn{width:100%}
+  .playerProfileHero{grid-template-columns:76px 1fr}
+  .playerProfilePhoto{width:76px;height:76px}
+}
+@media(prefers-reduced-motion:reduce){
+  .playerAllStarCard,.playerAllStarCard:before{animation:none!important;transform:none!important;opacity:1!important}
+}
+
+
+/* ===== Complete World Cup archive ===== */
+.wcArchive{margin:20px 0;padding:22px;border:1px solid rgba(65,170,235,.3);border-radius:26px;background:linear-gradient(135deg,#0c2135,#07131f);overflow:hidden}
+.wcArchiveHero{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.wcArchiveHero h2{margin:0;font-size:1.55rem}.wcArchiveHero p{margin:7px 0 0;color:var(--muted)}
+.wcArchiveBadge{padding:8px 12px;border-radius:999px;background:rgba(32,220,113,.12);border:1px solid rgba(32,220,113,.35);color:#20dc71;font-size:.75rem;font-weight:800}
+.wcArchiveGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+.wcArchiveCard{padding:16px;border:1px solid rgba(126,190,235,.25);border-radius:18px;background:rgba(255,255,255,.035);animation:wcFloat 5s ease-in-out infinite}
+.wcArchiveCard:nth-child(2){animation-delay:.4s}.wcArchiveCard:nth-child(3){animation-delay:.8s}.wcArchiveCard:nth-child(4){animation-delay:1.2s}
+.wcArchiveCard h3{margin:0;font-size:1rem}.wcArchiveCard .wcYear{color:#20dc71;font-weight:900;font-size:1.5rem;margin:7px 0}
+.wcArchiveCard p{margin:4px 0;color:var(--muted);font-size:.8rem;line-height:1.5}
+.wcArchiveTableWrap{overflow-x:auto;margin-top:18px;border:1px solid var(--line);border-radius:18px}
+.wcArchiveTable{width:100%;border-collapse:collapse;min-width:570px}
+.wcArchiveTable th,.wcArchiveTable td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:.84rem}
+.wcArchiveTable th{background:rgba(32,220,113,.09);color:#20dc71}
+.wcArchiveTable tr:last-child td{border-bottom:0}
+.wcFlagSmall{font-size:1.2rem;margin-right:6px}
+.wcArchiveNote{margin-top:13px;color:var(--muted);font-size:.78rem;line-height:1.5}
+@keyframes wcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media(max-width:760px){.wcArchiveGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.wcArchive{padding:16px}}
+@media(prefers-reduced-motion:reduce){.wcArchiveCard{animation:none}}
 
 </style>
 </head>
@@ -284,35 +416,62 @@ body.light .errorDetails{color:#9b263c;background:#fff1f3}
   </div>
 </section>
 
+<section class="section wrap" id="matches">
+  <div class="head"><div><h2>🏏 Upcoming & Completed</h2><p>Full status overview from the connected cricket feed</p></div></div>
+  <div id="upcomingGrid" class="grid"></div>
+  <div style="height:18px"></div>
+  <div id="completedGrid" class="grid"></div>
+</section>
+
+
 
 <section class="section wrap" id="worldcup">
-  <div class="head">
-    <div><h2>🏆 World Cup Universe</h2><p>Champions, runners-up, hosts and historic tournament records</p></div>
-  </div>
-
-  <div class="worldCupHero">
-    <div class="wcBanner">
-      <div class="wcKicker">CRICKETHUB SPECIAL • WORLD CUP ARCHIVE</div>
-      <h3>Every trophy has a story 🌍</h3>
-      <p>Explore Men's ODI, Men's T20, Women's ODI and Women's T20 World Cup history in one interactive section.</p>
-      <div class="notice">ℹ️ Historical archive view. Confirm the latest edition and official records with the ICC before publishing as an official statistical source.</div>
+  <div class="wcArchive">
+    <div class="wcArchiveHero">
+      <div>
+        <h2>🏆 World Cup Champions Archive</h2>
+        <p>Men’s and Women’s ODI + T20 World Cup history in one place.</p>
+      </div>
+      <span class="wcArchiveBadge">HISTORY • CHAMPIONS • FINALS</span>
     </div>
-    <div class="wcMiniGrid">
-      <div class="wcMini"><span>Men's ODI</span><b>1975</b><span>First edition</span></div>
-      <div class="wcMini"><span>Men's T20</span><b>2007</b><span>First edition</span></div>
-      <div class="wcMini"><span>Women's ODI</span><b>1973</b><span>First edition</span></div>
-      <div class="wcMini"><span>Women's T20</span><b>2009</b><span>First edition</span></div>
+    <div class="wcArchiveGrid">
+      <div class="wcArchiveCard">
+        <h3>🏏 Men’s ODI</h3><div class="wcYear">1975</div>
+        <p><b>First champions:</b> West Indies</p><p><b>Most titles:</b> Australia — 6</p><p><b>Latest completed:</b> 2023 — Australia</p>
+      </div>
+      <div class="wcArchiveCard">
+        <h3>⚡ Men’s T20</h3><div class="wcYear">2007</div>
+        <p><b>First champions:</b> India</p><p><b>2024 champion:</b> India</p><p><b>2026:</b> India won a third title</p>
+      </div>
+      <div class="wcArchiveCard">
+        <h3>🌸 Women’s ODI</h3><div class="wcYear">1973</div>
+        <p><b>First champions:</b> England</p><p><b>2022 champion:</b> Australia</p><p><b>2025 champion:</b> India</p>
+      </div>
+      <div class="wcArchiveCard">
+        <h3>💫 Women’s T20</h3><div class="wcYear">2009</div>
+        <p><b>First champions:</b> England</p><p><b>2024 champion:</b> New Zealand</p><p><b>2026:</b> Australia won the title</p>
+      </div>
     </div>
-  </div>
-
-  <div class="card" style="padding:18px">
-    <div class="wcFilter" id="worldCupFilters">
-      <button class="active" onclick="renderWorldCup('men-odi',this)">Men ODI</button>
-      <button onclick="renderWorldCup('men-t20',this)">Men T20</button>
-      <button onclick="renderWorldCup('women-odi',this)">Women ODI</button>
-      <button onclick="renderWorldCup('women-t20',this)">Women T20</button>
+    <div class="wcArchiveTableWrap">
+      <table class="wcArchiveTable">
+        <thead><tr><th>Tournament</th><th>Year</th><th>Champion</th><th>Runner-up</th><th>Final highlight</th></tr></thead>
+        <tbody>
+          <tr><td>Men’s ODI</td><td>1975</td><td><span class="wcFlagSmall">🏝️</span>West Indies</td><td>Australia</td><td>West Indies won the inaugural edition</td></tr>
+          <tr><td>Men’s ODI</td><td>2011</td><td><span class="wcFlagSmall">🇮🇳</span>India</td><td>Sri Lanka</td><td>India won on home soil</td></tr>
+          <tr><td>Men’s ODI</td><td>2023</td><td><span class="wcFlagSmall">🇦🇺</span>Australia</td><td>India</td><td>Australia won by 6 wickets</td></tr>
+          <tr><td>Men’s T20</td><td>2007</td><td><span class="wcFlagSmall">🇮🇳</span>India</td><td>Pakistan</td><td>India won the first T20 World Cup</td></tr>
+          <tr><td>Men’s T20</td><td>2024</td><td><span class="wcFlagSmall">🇮🇳</span>India</td><td>South Africa</td><td>India won by 7 runs</td></tr>
+          <tr><td>Men’s T20</td><td>2026</td><td><span class="wcFlagSmall">🇮🇳</span>India</td><td>—</td><td>India’s third title</td></tr>
+          <tr><td>Women’s ODI</td><td>1973</td><td><span class="wcFlagSmall">🏴</span>England</td><td>Australia</td><td>First women’s World Cup final</td></tr>
+          <tr><td>Women’s ODI</td><td>2022</td><td><span class="wcFlagSmall">🇦🇺</span>Australia</td><td>England</td><td>Australia won by 71 runs</td></tr>
+          <tr><td>Women’s ODI</td><td>2025</td><td><span class="wcFlagSmall">🇮🇳</span>India</td><td>South Africa</td><td>India won its first women’s ODI title</td></tr>
+          <tr><td>Women’s T20</td><td>2009</td><td><span class="wcFlagSmall">🏴</span>England</td><td>New Zealand</td><td>Inaugural women’s T20 edition</td></tr>
+          <tr><td>Women’s T20</td><td>2024</td><td><span class="wcFlagSmall">🇳🇿</span>New Zealand</td><td>South Africa</td><td>New Zealand won by 32 runs</td></tr>
+          <tr><td>Women’s T20</td><td>2026</td><td><span class="wcFlagSmall">🇦🇺</span>Australia</td><td>England</td><td>Australia won the title</td></tr>
+        </tbody>
+      </table>
     </div>
-    <div id="worldCupContent"></div>
+    <p class="wcArchiveNote">Archive note: Historical entries are presented as a built-in reference section. For live match data and future tournament updates, connect an official ICC or trusted cricket data API.</p>
   </div>
 </section>
 
@@ -341,13 +500,42 @@ body.light .errorDetails{color:#9b263c;background:#fff1f3}
   <div id="newsGrid" class="grid"></div>
 </section>
 
+
 <section class="section wrap" id="players">
   <div class="head">
-    <div><h2>🏆 Player Profiles</h2><p>Search available men's and women's players to open detailed profiles.</p></div>
-    <input id="playerSearch" class="search" placeholder="Search player…" oninput="filterPlayers()">
+    <div>
+      <h2>🏆 All-Star Player Universe</h2>
+      <p>Explore selected men's and women's cricket stars with animated cards, profiles, career highlights and achievements.</p>
+    </div>
+    <span class="pill">MEN + WOMEN</span>
   </div>
-  <div id="playerHint" class="notice">🔎 Type at least 2 letters to search players. Profiles stay hidden until you search.</div>
-  <div id="playerGrid" class="grid"></div>
+  <div class="playerTools card">
+    <div class="playerToolRow">
+      <input id="playerSearch" class="search" placeholder="🔍 Search player, country or role…" oninput="filterPlayers()">
+      <select id="playerGenderFilter" onchange="filterPlayers()">
+        <option value="all">All players</option>
+        <option value="Men">Men</option>
+        <option value="Women">Women</option>
+      </select>
+      <select id="playerRoleFilter" onchange="filterPlayers()">
+        <option value="all">All roles</option>
+        <option value="Batter">Batters</option>
+        <option value="Bowler">Bowlers</option>
+        <option value="All-rounder">All-rounders</option>
+        <option value="Wicketkeeper">Wicketkeepers</option>
+      </select>
+      <button class="btn" onclick="resetPlayerFilters()">Reset</button>
+    </div>
+    <div class="playerQuickFilters" id="playerQuickFilters">
+      <button class="playerChip active" onclick="quickPlayerFilter('all',this)">🌍 All</button>
+      <button class="playerChip" onclick="quickPlayerFilter('Men',this)">🏏 Men</button>
+      <button class="playerChip" onclick="quickPlayerFilter('Women',this)">🏏 Women</button>
+      <button class="playerChip" onclick="quickPlayerFilter('Legends',this)">⭐ Legends</button>
+      <button class="playerChip" onclick="quickPlayerFilter('Sri Lanka',this)">🇱🇰 Sri Lanka</button>
+    </div>
+  </div>
+  <div id="playerHint" class="notice">Showing all-star players. Use search or filters to explore the player universe.</div>
+  <div id="playerGrid" class="grid playerUniverseGrid"></div>
   <div class="grid" style="margin-top:15px">
     <div class="card record"><span>Test runs</span><b>15,921</b><span>Sachin Tendulkar</span></div>
     <div class="card record"><span>ODI runs</span><b>18,426</b><span>Sachin Tendulkar</span></div>
@@ -411,16 +599,21 @@ let currentPollDelay=POLL_INTERVALS.noLive;
 let isScoreRequestRunning=false;
 
 const players=[
- {name:"Sachin Tendulkar",team:"India",gender:"Men",role:"Batter",initials:"ST",summary:"Legendary Indian batter and former international captain.",details:"Known for exceptional technique, longevity and 100 international centuries.",record:"15,921 Test runs"},
- {name:"Muttiah Muralitharan",team:"Sri Lanka",gender:"Men",role:"Bowler",initials:"MM",summary:"Sri Lankan off-spin bowler and record-breaking wicket taker.",details:"Famous for variations, accuracy and match-winning spells.",record:"800 Test wickets"},
- {name:"Virat Kohli",team:"India",gender:"Men",role:"Batter",initials:"VK",summary:"Indian top-order batter known for consistency.",details:"A modern international batter across formats.",record:"14,000+ ODI runs"},
- {name:"Kumar Sangakkara",team:"Sri Lanka",gender:"Men",role:"Batter / Wicketkeeper",initials:"KS",summary:"Sri Lankan left-handed batter and wicketkeeper.",details:"Recognised for elegant batting and leadership.",record:"28,000+ international runs"},
- {name:"Brian Lara",team:"West Indies",gender:"Men",role:"Batter",initials:"BL",summary:"West Indies batting great.",details:"Known for his 400 not out Test innings.",record:"400* in Test cricket"},
- {name:"AB de Villiers",team:"South Africa",gender:"Men",role:"Batter",initials:"AB",summary:"South African batter known for inventive stroke play.",details:"A versatile batter with a creative style.",record:"Explosive international career"},
- {name:"Ellyse Perry",team:"Australia",gender:"Women",role:"All-rounder",initials:"EP",summary:"Australian cricketer known for elite batting and bowling.",details:"A leading figure in women's international cricket.",record:"International all-round records"},
- {name:"Mithali Raj",team:"India",gender:"Women",role:"Batter",initials:"MR",summary:"Former Indian captain and leading women's batter.",details:"Known for consistency, leadership and longevity.",record:"Over 10,000 international runs"},
- {name:"Smriti Mandhana",team:"India",gender:"Women",role:"Batter",initials:"SM",summary:"Indian left-handed opening batter.",details:"Known for timing and stroke play.",record:"International opening batter"},
- {name:"Chamari Athapaththu",team:"Sri Lanka",gender:"Women",role:"All-rounder",initials:"CA",summary:"Sri Lankan captain and powerful left-handed batter.",details:"A prominent player in Sri Lanka women's cricket.",record:"International all-round performances"}
+ {name:"Sachin Tendulkar",team:"India",flag:"🇮🇳",gender:"Men",role:"Batter",initials:"ST",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Sachin+Tendulkar&size=256&background=17324b&color=ffffff&bold=true",stat1:"15,921 Test runs",stat2:"100 international 100s",achievement:"Only men's player with 100 international centuries.",details:"India batting legend, World Cup winner in 2011 and one of cricket’s most celebrated batters."},
+ {name:"Muttiah Muralitharan",team:"Sri Lanka",flag:"🇱🇰",gender:"Men",role:"Bowler",initials:"MM",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Muttiah+Muralitharan&size=256&background=17324b&color=ffffff&bold=true",stat1:"800 Test wickets",stat2:"1,300+ intl wickets",achievement:"Record Test wicket-taker.",details:"Sri Lankan off-spinner renowned for variations, accuracy and match-winning spells."},
+ {name:"Virat Kohli",team:"India",flag:"🇮🇳",gender:"Men",role:"Batter",initials:"VK",tag:"All-Star",photo:"https://ui-avatars.com/api/?name=Virat+Kohli&size=256&background=17324b&color=ffffff&bold=true",stat1:"14,000+ ODI runs",stat2:"2011 WC winner",achievement:"Known for consistency and chase batting.",details:"Indian top-order batter with major achievements across international formats."},
+ {name:"Kumar Sangakkara",team:"Sri Lanka",flag:"🇱🇰",gender:"Men",role:"Wicketkeeper",initials:"KS",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Kumar+Sangakkara&size=256&background=17324b&color=ffffff&bold=true",stat1:"28,000+ intl runs",stat2:"Wicketkeeper-batter",achievement:"Four consecutive ODI World Cup centuries in 2015.",details:"Elegant left-handed batter and former Sri Lanka captain."},
+ {name:"Brian Lara",team:"West Indies",flag:"🏝️",gender:"Men",role:"Batter",initials:"BL",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Brian+Lara&size=256&background=17324b&color=ffffff&bold=true",stat1:"400* Test score",stat2:"501* first-class",achievement:"Holds the record for the highest individual Test innings.",details:"West Indies batting great celebrated for extraordinary stroke play."},
+ {name:"AB de Villiers",team:"South Africa",flag:"🇿🇦",gender:"Men",role:"Batter",initials:"AB",tag:"All-Star",photo:"https://ui-avatars.com/api/?name=AB+de+Villiers&size=256&background=17324b&color=ffffff&bold=true",stat1:"360° batting",stat2:"Fast ODI century",achievement:"Known for inventive and adaptable stroke play.",details:"South African batter who became famous for creative batting in every area of the ground."},
+ {name:"Shane Warne",team:"Australia",flag:"🇦🇺",gender:"Men",role:"Bowler",initials:"SW",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Shane+Warne&size=256&background=17324b&color=ffffff&bold=true",stat1:"708 Test wickets",stat2:"Leg-spin icon",achievement:"One of the most influential leg-spinners in cricket history.",details:"Australian leg-spinner famous for turn, control and tactical skill."},
+ {name:"Jacques Kallis",team:"South Africa",flag:"🇿🇦",gender:"Men",role:"All-rounder",initials:"JK",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Jacques+Kallis&size=256&background=17324b&color=ffffff&bold=true",stat1:"25,000+ intl runs",stat2:"577 intl wickets",achievement:"One of the game’s leading all-rounders.",details:"South African all-rounder with elite batting and seam-bowling records."},
+ {name:"Ellyse Perry",team:"Australia",flag:"🇦🇺",gender:"Women",role:"All-rounder",initials:"EP",tag:"All-Star",photo:"https://ui-avatars.com/api/?name=Ellyse+Perry&size=256&background=17324b&color=ffffff&bold=true",stat1:"Bat + ball",stat2:"Multiple WC titles",achievement:"A defining all-rounder in women’s cricket.",details:"Australian all-rounder known for high-level batting, bowling and longevity."},
+ {name:"Mithali Raj",team:"India",flag:"🇮🇳",gender:"Women",role:"Batter",initials:"MR",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Mithali+Raj&size=256&background=17324b&color=ffffff&bold=true",stat1:"10,000+ intl runs",stat2:"7,000+ ODI runs",achievement:"One of women’s cricket’s most prolific run-scorers.",details:"Former India captain recognised for consistency, leadership and longevity."},
+ {name:"Smriti Mandhana",team:"India",flag:"🇮🇳",gender:"Women",role:"Batter",initials:"SM",tag:"All-Star",photo:"https://ui-avatars.com/api/?name=Smriti+Mandhana&size=256&background=17324b&color=ffffff&bold=true",stat1:"Left-hand opener",stat2:"Multiple intl awards",achievement:"Known for timing, elegance and attacking opening play.",details:"Indian left-handed opening batter and major figure in modern women’s cricket."},
+ {name:"Chamari Athapaththu",team:"Sri Lanka",flag:"🇱🇰",gender:"Women",role:"All-rounder",initials:"CA",tag:"All-Star",photo:"https://ui-avatars.com/api/?name=Chamari+Athapaththu&size=256&background=17324b&color=ffffff&bold=true",stat1:"Powerful left-hander",stat2:"Sri Lanka captain",achievement:"A leading run-maker and match-winner for Sri Lanka.",details:"Sri Lankan captain and all-rounder known for aggressive batting."},
+ {name:"Meg Lanning",team:"Australia",flag:"🇦🇺",gender:"Women",role:"Batter",initials:"ML",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Meg+Lanning&size=256&background=17324b&color=ffffff&bold=true",stat1:"World Cup captain",stat2:"Multiple WC titles",achievement:"Led Australia during a highly successful era.",details:"Australian batter and former captain with major World Cup success."},
+ {name:"Jhulan Goswami",team:"India",flag:"🇮🇳",gender:"Women",role:"Bowler",initials:"JG",tag:"Legends",photo:"https://ui-avatars.com/api/?name=Jhulan+Goswami&size=256&background=17324b&color=ffffff&bold=true",stat1:"Fast bowler",stat2:"200+ ODI wickets",achievement:"One of women’s international cricket’s leading wicket-takers.",details:"Indian fast bowler known for discipline, movement and longevity."},
+ {name:"Stafanie Taylor",team:"West Indies",flag:"🏝️",gender:"Women",role:"All-rounder",initials:"ST",tag:"All-Star",photo:"https://ui-avatars.com/api/?name=Stafanie+Taylor&size=256&background=17324b&color=ffffff&bold=true",stat1:"Bat + off-spin",stat2:"T20 World Cup winner",achievement:"Key all-rounder in West Indies women’s cricket.",details:"West Indies all-rounder recognised for leadership and match impact."}
 ];
 
 function toggleMode(){
@@ -435,17 +628,92 @@ function safe(s){return String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt
 function escAttr(s){return safe(s).replace(/'/g,"&#39;")}
 function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display="none",3200)}
 
-function renderPlayers(list=[]){
- const grid=document.getElementById("playerGrid"); if(!list.length){grid.innerHTML="";return;}
- grid.innerHTML=list.map((p,i)=>`<article class="card player" onclick="openPlayerProfile(${i})"><div class="prow"><div class="avatar">${safe(p.initials)}</div><div><h3>${safe(p.name)}</h3><p>${safe(p.team)} • ${safe(p.gender)} • ${safe(p.role)}</p></div></div><div class="stat"><span>Profile</span><b>View details →</b></div></article>`).join("");
-}
 let searchedPlayers=[];
+let activeQuickPlayerFilter="all";
+
+function renderPlayers(list=[]){
+ const grid=document.getElementById("playerGrid");
+ const hint=document.getElementById("playerHint");
+ searchedPlayers=list;
+ if(!list.length){
+   grid.innerHTML='<div class="card empty"><b>No players found</b><span class="muted">Try another name, country or filter.</span></div>';
+   if(hint) hint.textContent="No players match the current filters.";
+   return;
+ }
+ if(hint) hint.textContent=`Showing ${list.length} all-star player${list.length===1?"":"s"}. Tap a card to open the full profile.`;
+ grid.innerHTML=list.map((p,i)=>`
+ <article class="card playerAllStarCard" style="--player-delay:${Math.min(i,8)*65}ms" onclick="openPlayerProfile(${i})">
+   <div class="playerCardTop">
+     <img class="playerPortrait" src="${safe(p.photo)}" alt="${safe(p.name)} portrait" loading="lazy"
+       onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&size=256&background=17324b&color=ffffff&bold=true'">
+     <div class="playerMeta">
+       <h3>${safe(p.name)}</h3>
+       <p>${safe(p.flag)} ${safe(p.team)} • ${safe(p.gender)}</p>
+       <span class="playerBadge">${safe(p.role)} • ${safe(p.tag)}</span>
+     </div>
+   </div>
+   <div class="playerStatsMini">
+     <div class="playerMiniStat"><span>Career highlight</span><b>${safe(p.stat1)}</b></div>
+     <div class="playerMiniStat"><span>Signature</span><b>${safe(p.stat2)}</b></div>
+   </div>
+   <div class="playerAchievement"><strong>🏆 Achievement:</strong> ${safe(p.achievement)}</div>
+   <div class="playerCardFooter"><span>Open full profile</span><b>View details →</b></div>
+ </article>`).join("");
+}
+
+function filterPlayers(){
+ const q=(document.getElementById("playerSearch")?.value||"").trim().toLowerCase();
+ const gender=document.getElementById("playerGenderFilter")?.value||"all";
+ const role=document.getElementById("playerRoleFilter")?.value||"all";
+ let list=players.filter(p=>{
+   const hay=[p.name,p.team,p.gender,p.role,p.tag,p.achievement].join(" ").toLowerCase();
+   const queryOk=!q||hay.includes(q);
+   const genderOk=gender==="all"||p.gender===gender;
+   const roleOk=role==="all"||p.role.includes(role);
+   const quickOk=activeQuickPlayerFilter==="all"||
+      (activeQuickPlayerFilter==="Legends"&&p.tag==="Legends")||
+      p.team===activeQuickPlayerFilter;
+   return queryOk&&genderOk&&roleOk&&quickOk;
+ });
+ renderPlayers(list);
+}
+
+function quickPlayerFilter(value,el){
+ activeQuickPlayerFilter=value;
+ document.querySelectorAll(".playerChip").forEach(x=>x.classList.remove("active"));
+ if(el) el.classList.add("active");
+ filterPlayers();
+}
+
+function resetPlayerFilters(){
+ activeQuickPlayerFilter="all";
+ document.getElementById("playerSearch").value="";
+ document.getElementById("playerGenderFilter").value="all";
+ document.getElementById("playerRoleFilter").value="all";
+ document.querySelectorAll(".playerChip").forEach(x=>x.classList.remove("active"));
+ document.querySelector(".playerChip")?.classList.add("active");
+ filterPlayers();
+}
 
 function openPlayerProfile(index){
  const p=searchedPlayers[index]; if(!p)return;
  document.getElementById("modalType").textContent=`PLAYER PROFILE • ${p.gender.toUpperCase()}`;
  document.getElementById("modalTitle").textContent=p.name;
- document.getElementById("modalBody").innerHTML=`<div class="detailHero"><div class="detailTeam"><b>${safe(p.team)}</b><div>${safe(p.gender)}</div></div><div class="detailScore">🏏<div class="centerNote">${safe(p.role)}</div></div><div class="detailTeam"><b>${safe(p.initials)}</b><div>Player</div></div></div><div class="notice"><b>About</b><br>${safe(p.summary)}</div><div class="notice"><b>Profile details</b><br>${safe(p.details)}</div><div class="stat"><span>Notable record</span><b>${safe(p.record)}</b></div>`;
+ document.getElementById("modalBody").innerHTML=`
+ <div class="playerProfileHero">
+   <img class="playerProfilePhoto" src="${safe(p.photo)}" alt="${safe(p.name)} portrait"
+     onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&size=256&background=17324b&color=ffffff&bold=true'">
+   <div><h3>${safe(p.flag)} ${safe(p.name)}</h3><p>${safe(p.team)} • ${safe(p.gender)} • ${safe(p.role)}</p><span class="playerBadge">${safe(p.tag)}</span></div>
+ </div>
+ <div class="notice"><b>About the player</b><br>${safe(p.details)}</div>
+ <div class="playerProfileGrid">
+   <div class="playerProfileItem"><span>Career highlight</span><b>${safe(p.stat1)}</b></div>
+   <div class="playerProfileItem"><span>Signature</span><b>${safe(p.stat2)}</b></div>
+   <div class="playerProfileItem"><span>Role</span><b>${safe(p.role)}</b></div>
+   <div class="playerProfileItem"><span>Country</span><b>${safe(p.team)}</b></div>
+ </div>
+ <div class="notice"><b>🏆 Achievement</b><br>${safe(p.achievement)}</div>
+ <div class="notice"><small>Note: This is a curated all-star profile showcase. For official live statistics, verify with the ICC or the relevant cricket board.</small></div>`;
  document.getElementById("overlay").style.display="flex";
 }
 
@@ -772,85 +1040,69 @@ renderRanking("men-test");
 renderMatchesExplorer();
 
 
-/* ===== WORLD CUP ARCHIVE ===== */
-const worldCupData={
-  "men-odi":{
-    title:"Men's ODI Cricket World Cup",
-    first:"1975", latest:"2023",
-    champion:"Australia", championFlag:"🇦🇺", titles:6,
-    runner:"India", host:"India", final:"Australia defeated India by 6 wickets (2023)",
-    rows:[
-      ["Australia","🇦🇺",6,"1987, 1999, 2003, 2007, 2015, 2023"],
-      ["India","🇮🇳",2,"1983, 2011"],
-      ["West Indies","🏝️",2,"1975, 1979"],
-      ["Pakistan","🇵🇰",1,"1992"],
-      ["Sri Lanka","🇱🇰",1,"1996"]
+const wcFirstChampionShowcase = {
+  "men-odi": {
+    note: "Men’s ODI World Cup • First edition: 1975 • First champions: West Indies",
+    cards: [
+      {country:"West Indies",year:"1975",flag:"https://flagcdn.com/w160/jm.png",label:"First champions"},
+      {country:"Australia",year:"1987",flag:"https://flagcdn.com/w160/au.png",label:"First title"},
+      {country:"Pakistan",year:"1992",flag:"https://flagcdn.com/w160/pk.png",label:"First title"},
+      {country:"Sri Lanka",year:"1996",flag:"https://flagcdn.com/w160/lk.png",label:"First title"}
     ]
   },
-  "men-t20":{
-    title:"Men's T20 World Cup",
-    first:"2007", latest:"2024",
-    champion:"India", championFlag:"🇮🇳", titles:2,
-    runner:"South Africa", host:"West Indies & USA", final:"India defeated South Africa by 7 runs (2024)",
-    rows:[
-      ["India","🇮🇳",2,"2007, 2024"],
-      ["West Indies","🏝️",2,"2012, 2016"],
-      ["England","🏴",2,"2010, 2022"],
-      ["Pakistan","🇵🇰",1,"2009"],
-      ["Sri Lanka","🇱🇰",1,"2014"],
-      ["Australia","🇦🇺",1,"2021"]
+  "men-t20": {
+    note: "Men’s T20 World Cup • First edition: 2007 • First champions: India",
+    cards: [
+      {country:"India",year:"2007",flag:"https://flagcdn.com/w160/in.png",label:"First champions"},
+      {country:"Pakistan",year:"2009",flag:"https://flagcdn.com/w160/pk.png",label:"First title"},
+      {country:"England",year:"2010",flag:"https://flagcdn.com/w160/gb-eng.png",label:"First title"},
+      {country:"West Indies",year:"2012",flag:"https://flagcdn.com/w160/jm.png",label:"First title"}
     ]
   },
-  "women-odi":{
-    title:"Women's ODI Cricket World Cup",
-    first:"1973", latest:"2022",
-    champion:"Australia", championFlag:"🇦🇺", titles:7,
-    runner:"England", host:"New Zealand", final:"Australia defeated England by 71 runs (2022)",
-    rows:[
-      ["Australia","🇦🇺",7,"1978, 1982, 1988, 1997, 2005, 2013, 2022"],
-      ["England","🏴",4,"1973, 1993, 2009, 2017"],
-      ["New Zealand","🇳🇿",1,"2000"]
+  "women-odi": {
+    note: "Women’s ODI World Cup • First edition: 1973 • First champions: England",
+    cards: [
+      {country:"England",year:"1973",flag:"https://flagcdn.com/w160/gb-eng.png",label:"First champions"},
+      {country:"Australia",year:"1978",flag:"https://flagcdn.com/w160/au.png",label:"First title"},
+      {country:"New Zealand",year:"2000",flag:"https://flagcdn.com/w160/nz.png",label:"First title"},
+      {country:"India",year:"—",flag:"https://flagcdn.com/w160/in.png",label:"Finalists"}
     ]
   },
-  "women-t20":{
-    title:"Women's T20 World Cup",
-    first:"2009", latest:"2024",
-    champion:"New Zealand", championFlag:"🇳🇿", titles:1,
-    runner:"South Africa", host:"United Arab Emirates", final:"New Zealand defeated South Africa by 32 runs (2024)",
-    rows:[
-      ["Australia","🇦🇺",6,"2010, 2012, 2014, 2018, 2020, 2023"],
-      ["England","🏴",1,"2009"],
-      ["West Indies","🏝️",1,"2016"],
-      ["New Zealand","🇳🇿",1,"2024"]
+  "women-t20": {
+    note: "Women’s T20 World Cup • First edition: 2009 • First champions: England",
+    cards: [
+      {country:"England",year:"2009",flag:"https://flagcdn.com/w160/gb-eng.png",label:"First champions"},
+      {country:"Australia",year:"2010",flag:"https://flagcdn.com/w160/au.png",label:"First title"},
+      {country:"West Indies",year:"2016",flag:"https://flagcdn.com/w160/jm.png",label:"First title"},
+      {country:"New Zealand",year:"2024",flag:"https://flagcdn.com/w160/nz.png",label:"First title"}
     ]
   }
 };
 
-function renderWorldCup(key="men-odi",el){
-  document.querySelectorAll("#worldCupFilters button").forEach(b=>b.classList.remove("active"));
-  if(el)el.classList.add("active");
-  const d=worldCupData[key]||worldCupData["men-odi"];
-  const rows=[...d.rows].sort((a,b)=>b[2]-a[2]||a[0].localeCompare(b[0]));
-  document.getElementById("worldCupContent").innerHTML=`
-    <div class="rankTop">
-      <div><div class="rankTitle">${safe(d.title)}</div><div class="rankSub">Archive: ${safe(d.first)}–${safe(d.latest)}</div></div>
-      <span class="tag">WORLD CUP</span>
-    </div>
-    <div class="wcInfoGrid">
-      <div class="wcInfo"><small>Latest listed champion</small><strong>${d.championFlag} ${safe(d.champion)}</strong></div>
-      <div class="wcInfo"><small>Most titles in this archive</small><strong>${d.titles} trophies</strong></div>
-      <div class="wcInfo"><small>Latest listed final</small><strong>${safe(d.final)}</strong></div>
-    </div>
-    <div class="tableWrap">
-      <table class="wcTable">
-        <thead><tr><th>Rank</th><th>Country</th><th>Titles</th><th>Winning years</th></tr></thead>
-        <tbody>${rows.map((r,i)=>`<tr><td class="wcRank">${i+1}</td><td><div class="wcCountry"><span>${r[1]}</span>${safe(r[0])}</div></td><td>${r[2]}</td><td class="wcYears">${safe(r[3])}</td></tr>`).join("")}</tbody>
-      </table>
-    </div>
-    <div class="notice rankNote">📌 Listed final context: ${safe(d.final)} • Listed host: ${safe(d.host)}. This is a compact historical archive, not a live ICC database.</div>`;
+function renderFirstChampionShowcase(key){
+  const rail = document.getElementById("wcChampionRail");
+  const note = document.getElementById("wcFirstNote");
+  const pack = wcFirstChampionShowcase[key];
+  if(!rail || !note || !pack) return;
+  rail.innerHTML = pack.cards.map((item,index)=>`
+    <article class="wcChampionCard" style="--delay:${index * 120}ms">
+      <div class="wcTrophy">🏆</div>
+      <img class="wcFlag" src="${item.flag}" alt="${item.country} flag" loading="lazy"
+           onerror="this.style.display='none'">
+      <h4>${item.country}</h4>
+      <p>${item.label}<br><strong>${item.year}</strong></p>
+    </article>
+  `).join("");
+  note.textContent = pack.note + ".";
 }
-renderWorldCup("men-odi");
 
+const originalRenderWorldCup = renderWorldCup;
+renderWorldCup = function(key){
+  originalRenderWorldCup(key);
+  renderFirstChampionShowcase(key);
+};
+
+renderPlayers(players);
 </script>
 </body>
 </html>

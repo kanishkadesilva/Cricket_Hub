@@ -843,11 +843,33 @@ function matchStatus(m){
  return "upcoming";
 }
 function matchId(m){return m.id||m.unique_id||m.matchId||m.match_id||""}
+function teamName(t){
+ if(typeof t === "string") return t;
+ return t?.team || t?.name || t?.shortName || "Team";
+}
 function teamScore(t){
- if(t.score!=null) return t.score;
+ if(t==null) return "-";
+ if(typeof t === "string") return "-";
+ if(t.score!=null) return String(t.score);
  if(t.runs!=null) return String(t.runs)+(t.wickets!=null?"/"+t.wickets:"");
- if(t.runs!=null) return String(t.runs);
+ if(t.r!=null) return String(t.r)+(t.w!=null?"/"+t.w:"");
  return "-";
+}
+function matchScores(m){
+ const raw=Array.isArray(m?.score)?m.score:Array.isArray(m?.scores)?m.scores:[];
+ return raw.map(x=>({
+   inning:x.inning||x.team||x.name||"",
+   value:x.score!=null?String(x.score):x.r!=null?String(x.r)+(x.w!=null?"/"+x.w:""):x.runs!=null?String(x.runs)+(x.wickets!=null?"/"+x.wickets:""):"-"
+ }));
+}
+function scoreForTeam(m,t,index){
+ const direct=teamScore(t);
+ if(direct!=="-") return direct;
+ const name=teamName(t).toLowerCase();
+ const found=matchScores(m).find(x=>x.inning.toLowerCase().includes(name));
+ if(found) return found.value;
+ const scores=matchScores(m);
+ return scores[index]?.value || "-";
 }
 function matchCard(m){
  const ts=m.teams||[];
@@ -857,12 +879,12 @@ function matchCard(m){
  const venue=(m.venue||m.stadium||m.ground||m.groundName||"Venue details unavailable");
  const location=(m.city||m.location||m.country||"");
  const status=(m.status||m.matchStatus||m.date||"Tap for full details");
- const scorePreview=ts.map(t=>(t.team||t.name||"Team")+": "+(teamScore(t)||"—")).join(" • ");
+ const scorePreview=ts.map((t,i)=>teamName(t)+": "+scoreForTeam(m,t,i)).join(" • ");
  const insight=buildFlashInsight(m,st);
  return `<article class="card score flashMatchCard premiumFlash" onclick="openScoreById('${escAttr(id)}')">
  ${st==="live"?'<div class="liveBar"></div>':''}
  <div class="flashHeader"><span class="flashLeague">${safe(m.matchType||m.type||"CRICKET")}</span><span class="${classes}">${st==="live"?"● LIVE":st==="completed"?"COMPLETED":"UPCOMING"}</span></div>
- <div class="flashTeams">${ts.length?ts.map(t=>`<div class="flashTeam"><span>${safe(t.team||t.name||"Team")}</span><strong>${safe(teamScore(t))}</strong></div>`).join(""):`<div class="flashTeam"><span>${safe(m.name||m.title||"Match")}</span><strong>—</strong></div>`}</div>
+ <div class="flashTeams">${ts.length?ts.map((t,i)=>`<div class="flashTeam"><span>${safe(teamName(t))}</span><strong>${safe(scoreForTeam(m,t,i))}</strong></div>`).join(""):`<div class="flashTeam"><span>${safe(m.name||m.title||"Match")}</span><strong>—</strong></div>`}</div>
  <div class="flashStatus">${safe(status)}</div>
  <div class="flashCombined">
    <div class="flashVenueBlock"><div class="flashLabel">🏟️ VENUE</div><div class="flashValue">${safe(venue)}</div>${location?`<div class="flashSmall">📍 ${safe(location)}</div>`:""}</div>
@@ -873,7 +895,7 @@ function matchCard(m){
 }
 function buildFlashInsight(m,st){
  const ts=m.teams||[];
- const scores=ts.map(t=>teamScore(t)).filter(Boolean).join(" • ");
+ const scores=ts.map((t,i)=>scoreForTeam(m,t,i)).filter(x=>x && x!=="-").join(" • ");
  if(st==="live") return {title:"Live match is in progress",text:(scores?"Current: "+scores+". ":"")+"Follow runs, wickets, overs and match momentum."};
  if(st==="completed") return {title:"Result available for review",text:(scores?"Final score: "+scores+". ":"")+"Review the result and winning margin from the match details."};
  return {title:"Pre-match intelligence",text:(scores?"Available score data: "+scores+". ":"")+"Check the start time, venue and team information before play."};
@@ -1041,11 +1063,11 @@ function openVenueById(id){
 function openAIById(id){
  const m=allMatches.find(x=>String(matchId(x))===String(id)); if(!m)return;
  const ts=m?.teams||[];
- const scores=ts.map(t=>({name:t.team||t.name||"Team",score:teamScore(t)}));
+ const scores=ts.map((t,i)=>({name:teamName(t),score:scoreForTeam(m,t,i)}));
  const status=m?.status||m?.matchStatus||"Match status unavailable";
  const live=matchStatus(m)==="live";
  const venue=m?.venue||m?.stadium||m?.ground||"Venue not supplied";
- const scoreText=scores.map(x=>x.name+": "+(x.score||"—")).join(" • ")||"Score data unavailable";
+ const scoreText=scores.map(x=>x.name+": "+(x.score!=="-"?x.score:"—")).join(" • ")||"Score data unavailable";
  const innings=(m?.score||m?.scores||m?.innings||[]);
  const hasScore=Boolean(scoreText && !/—$/.test(scoreText));
  let insight=live
@@ -1055,7 +1077,7 @@ function openAIById(id){
    :"This match is upcoming. The available information can be used to check the fixture, teams and venue.";
  if(Array.isArray(innings)&&innings.length) insight+=" Innings data is available, so the scorecard can provide deeper context.";
  document.getElementById("modalType").textContent="CRICKETHUB PRO • AI MATCH INSIGHTS";
- document.getElementById("modalTitle").textContent=ts.map(t=>t.team||t.name).join(" vs ")||m?.name||"Match insights";
+ document.getElementById("modalTitle").textContent=ts.map(t=>teamName(t)).join(" vs ")||m?.name||"Match insights";
  document.getElementById("modalBody").innerHTML=`
    <div class="premiumInsight">
      <h3>🧠 Smart Cricket Analysis</h3>

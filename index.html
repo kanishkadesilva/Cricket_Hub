@@ -936,35 +936,22 @@ body.light .errorDetails{color:#9b263c;background:#fff1f3}
 <div class="contactOverlay" id="contactOverlay" onclick="if(event.target===this)closeContactForm()">
   <div class="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
     <div class="contactModalTop">
-      <h3 id="contactModalTitle">💬 Contact via WhatsApp</h3>
-      <button class="contactClose" type="button" onclick="closeContactForm()" aria-label="Close contact form">×</button>
+      <h3 id="contactModalTitle">🛒 Place Order via WhatsApp</h3>
+      <button class="contactClose" type="button" onclick="closeContactForm()" aria-label="Close order form">×</button>
     </div>
-    <p class="contactHint">Fill in the short details below. Press Continue to open WhatsApp with your message prepared.</p>
+    <p class="contactHint">Enter your details. Your cart items and total will be added to the WhatsApp message automatically.</p>
     <form class="contactForm" id="contactForm" onsubmit="event.preventDefault();sendContactToWhatsApp()">
       <label>Name *
         <input id="contactName" type="text" placeholder="Your name" required>
       </label>
-      <label>Address
-        <input id="contactAddress" type="text" placeholder="Your address">
+      <label>Phone Number *
+        <input id="contactPhone" type="tel" placeholder="072 247 7361" required>
       </label>
-      <label>Email
-        <input id="contactEmail" type="email" placeholder="your@email.com">
-      </label>
-      <label>Phone Number
-        <input id="contactPhone" type="tel" placeholder="+94 ...">
-      </label>
-      <label>Website
-        <input id="contactWebsite" type="text" placeholder="Your website or social link">
-      </label>
-      <label>What do you think about CricketHub Pro? *
-        <textarea id="contactFeedback" placeholder="Write your feedback, idea or message..." required></textarea>
+      <label>Address *
+        <input id="contactAddress" type="text" placeholder="Your address" required>
       </label>
       <button class="contactContinue" type="submit">Continue → WhatsApp</button>
-      <p class="contactFormNote">WhatsApp will open with the details filled in. You can review the message before sending it.</p>
-      <a class="contactContinue" href="https://wa.me/94722477361" target="_self"
-         style="display:block;text-align:center;text-decoration:none;margin-top:8px;background:#163247;color:var(--text);">
-        Open WhatsApp Directly ↗
-      </a>
+      <p class="contactFormNote">WhatsApp will open with the order message already prepared. You can review it before sending.</p>
     </form>
   </div>
 </div>
@@ -1652,36 +1639,44 @@ function copyContactEmail(){
   }
 }
 function sendContactToWhatsApp(){
-  const form = document.getElementById("contactForm");
-  if(!form) return;
-  const name = document.getElementById("contactName").value.trim();
-  const address = document.getElementById("contactAddress").value.trim();
-  const email = document.getElementById("contactEmail").value.trim();
-  const phone = document.getElementById("contactPhone").value.trim();
-  const website = document.getElementById("contactWebsite").value.trim();
-  const feedback = document.getElementById("contactFeedback").value.trim();
+  const name = document.getElementById("contactName")?.value.trim() || "";
+  const phone = document.getElementById("contactPhone")?.value.trim() || "";
+  const address = document.getElementById("contactAddress")?.value.trim() || "";
 
-  if(!name || !feedback){
-    showToast("Please enter your name and feedback.");
+  if(!name || !phone || !address){
+    showToast("Please enter your name, phone and address.");
     return;
   }
 
+  let orderCart = [];
+  try {
+    if (typeof cart !== "undefined" && Array.isArray(cart)) orderCart = cart;
+  } catch (_) {}
+  if (!orderCart.length && Array.isArray(window.cart)) orderCart = window.cart;
+
+  const lines = orderCart.length
+    ? orderCart.map(i => `• ${i.name} x${i.qty} — Rs. ${(Number(i.price) * Number(i.qty)).toLocaleString()}`).join("\n")
+    : "• No cart items found";
+  const total = orderCart.reduce((sum, i) => sum + (Number(i.price) * Number(i.qty)), 0);
+
   const message =
-`🏏 CricketHub Pro Contact
+`Hi SEOKY! 👋
 
-👤 Name: ${name}
-📍 Address: ${address || "Not provided"}
-✉️ Email: ${email || "Not provided"}
-📱 Phone: ${phone || "Not provided"}
-🌐 Website: ${website || "Not provided"}
+I'd like to place an order.
 
-💬 Feedback / Opinion:
-${feedback}`;
+Name: ${name}
+Phone: ${phone}
+Address: ${address}
+
+ORDER:
+${lines}
+
+Total: Rs. ${total.toLocaleString()}`;
 
   const url = "https://wa.me/" + contactWhatsAppNumber + "?text=" + encodeURIComponent(message);
-  // Navigate directly so iPhone Safari can open WhatsApp without popup blocking.
   window.location.href = url;
 }
+
 
 </script>
 </body>

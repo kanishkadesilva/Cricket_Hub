@@ -936,10 +936,10 @@ body.light .errorDetails{color:#9b263c;background:#fff1f3}
 <div class="contactOverlay" id="contactOverlay" onclick="if(event.target===this)closeContactForm()">
   <div class="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
     <div class="contactModalTop">
-      <h3 id="contactModalTitle">🛒 Place Order via WhatsApp</h3>
-      <button class="contactClose" type="button" onclick="closeContactForm()" aria-label="Close order form">×</button>
+      <h3 id="contactModalTitle">💬 Share Your Feedback</h3>
+      <button class="contactClose" type="button" onclick="closeContactForm()" aria-label="Close feedback form">×</button>
     </div>
-    <p class="contactHint">Enter your details. Your cart items and total will be added to the WhatsApp message automatically.</p>
+    <p class="contactHint">Fill in the details below. Your message will be prepared automatically in WhatsApp.</p>
     <form class="contactForm" id="contactForm" onsubmit="event.preventDefault();sendContactToWhatsApp()">
       <label>Name *
         <input id="contactName" type="text" placeholder="Your name" required>
@@ -947,11 +947,17 @@ body.light .errorDetails{color:#9b263c;background:#fff1f3}
       <label>Phone Number *
         <input id="contactPhone" type="tel" placeholder="072 247 7361" required>
       </label>
-      <label>Address *
-        <input id="contactAddress" type="text" placeholder="Your address" required>
+      <label>Address
+        <input id="contactAddress" type="text" placeholder="Your address">
+      </label>
+      <label>Email
+        <input id="contactEmail" type="email" placeholder="your@email.com">
+      </label>
+      <label>Ideas / Suggestions
+        <textarea id="contactIdeas" placeholder="Any ideas or features you'd like to see?"></textarea>
       </label>
       <button class="contactContinue" type="submit">Continue → WhatsApp</button>
-      <p class="contactFormNote">WhatsApp will open with the order message already prepared. You can review it before sending.</p>
+      <p class="contactFormNote">WhatsApp will open with your details and feedback already prepared. You can review the message and tap Send.</p>
     </form>
   </div>
 </div>
@@ -1642,41 +1648,32 @@ function sendContactToWhatsApp(){
   const name = document.getElementById("contactName")?.value.trim() || "";
   const phone = document.getElementById("contactPhone")?.value.trim() || "";
   const address = document.getElementById("contactAddress")?.value.trim() || "";
+  const email = document.getElementById("contactEmail")?.value.trim() || "";
+  const ideas = document.getElementById("contactIdeas")?.value.trim() || "";
 
-  if(!name || !phone || !address){
-    showToast("Please enter your name, phone and address.");
+  if(!name || !phone){
+    showToast("Please enter your name and phone number.");
     return;
   }
 
-  let orderCart = [];
-  try {
-    if (typeof cart !== "undefined" && Array.isArray(cart)) orderCart = cart;
-  } catch (_) {}
-  if (!orderCart.length && Array.isArray(window.cart)) orderCart = window.cart;
-
-  const lines = orderCart.length
-    ? orderCart.map(i => `• ${i.name} x${i.qty} — Rs. ${(Number(i.price) * Number(i.qty)).toLocaleString()}`).join("\n")
-    : "• No cart items found";
-  const total = orderCart.reduce((sum, i) => sum + (Number(i.price) * Number(i.qty)), 0);
-
   const message =
-`Hi SEOKY! 👋
+`Hi Guys! 👋
 
-I'd like to place an order.
+I'd like to know some feedback about CricketHub Pro.
 
 Name: ${name}
 Phone: ${phone}
-Address: ${address}
+Address: ${address || "..."}
+Email: ${email || "..."}
 
-ORDER:
-${lines}
+IDEAS / SUGGESTIONS:
+${ideas || "..."}
 
-Total: Rs. ${total.toLocaleString()}`;
+Thank you!`;
 
   const url = "https://wa.me/" + contactWhatsAppNumber + "?text=" + encodeURIComponent(message);
   window.location.href = url;
 }
-
 
 </script>
 </body>
